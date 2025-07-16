@@ -1,0 +1,93 @@
+import 'package:flutter/material.dart';
+
+void main() {
+  runApp(MeusClientesApp());
+}
+
+class MeusClientesApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Meus Clientes Tiago Jesus',
+      theme: ThemeData(primarySwatch: Colors.blue),
+      home: ClienteHomePage(),
+    );
+  }
+}
+
+class ClienteHomePage extends StatefulWidget {
+  @override
+  _ClienteHomePageState createState() => _ClienteHomePageState();
+}
+
+class _ClienteHomePageState extends State<ClienteHomePage> {
+  final List<Map<String, String>> clientes = [];
+
+  final nomeController = TextEditingController();
+  final clusterController = TextEditingController();
+
+  void _adicionarCliente() {
+    final nome = nomeController.text.trim();
+    final cluster = clusterController.text.trim();
+
+    if (nome.isNotEmpty && cluster.isNotEmpty) {
+      setState(() {
+        clientes.add({'nome': nome, 'cluster': cluster});
+      });
+      nomeController.clear();
+      clusterController.clear();
+    }
+  }
+
+  @override
+  void dispose() {
+    nomeController.dispose();
+    clusterController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Meus Clientes - Tiago Jesus'),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          children: [
+            TextField(
+              controller: nomeController,
+              decoration: InputDecoration(labelText: 'Nome do Cliente'),
+            ),
+            TextField(
+              controller: clusterController,
+              decoration: InputDecoration(labelText: 'Cluster'),
+            ),
+            SizedBox(height: 12),
+            ElevatedButton(
+              onPressed: _adicionarCliente,
+              child: Text('Adicionar Cliente'),
+            ),
+            SizedBox(height: 20),
+            Expanded(
+              child: clientes.isEmpty
+                  ? Text('Nenhum cliente cadastrado ainda.')
+                  : ListView.builder(
+                      itemCount: clientes.length,
+                      itemBuilder: (ctx, index) {
+                        final cliente = clientes[index];
+                        return ListTile(
+                          leading: Icon(Icons.person),
+                          title: Text(cliente['nome'] ?? ''),
+                          subtitle: Text('Cluster: ${cliente['cluster']}'),
+                        );
+                      },
+                    ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
